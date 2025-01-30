@@ -41,7 +41,7 @@ const Package_Admin = () => {
     .then((res) => res.json())
     .then((data) => setPackages(data))
     .catch((error) => console.error("Error:", error));
-    }, [router,packages]);
+    }, [router,packages,baseUrl]);
 
  
 

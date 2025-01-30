@@ -27,8 +27,16 @@ const Project = () => {
     if (!token) {
       router.push("/admin/login");
     }
-    fetchProjects();
-  }, [router]);
+
+    fetch(`${baseUrl}/api/project`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setData(data))
+      .catch((error) => console.error("Error:", error));
+  }, [router,baseUrl]);
 
   const fetchProjects = () => {
     const token = getAuthToken();
@@ -425,9 +433,7 @@ const Project = () => {
                     })}
                     className="mt-2"
                   />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Select multiple images to add new ones (existing images won't be replaced)
-                  </p>
+                  
                 </div>
 
                 <div className="flex justify-end gap-4 mt-4">
