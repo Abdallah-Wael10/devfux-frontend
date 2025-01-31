@@ -8,17 +8,33 @@ import Image from 'next/image'
 import logo from "../../homeimages/logo.svg"
 import Card from '@/app/component/card/page'
 import Footer from '@/app/component/footer/page'
+
+import Loading from '@/app/component/loading/page';
 const Portfolio = () => {
+    const [isLoading, setIsLoading] = useState(true);
+  
  const baseUrl = process.env.NEXT_PUBLIC_API_URL
 
   const [data , setData] = useState([]);
   useEffect(() => {
-    fetch(`${baseUrl}/api/project`)
+    try {
+      setIsLoading(true);
+      fetch(`${baseUrl}/api/project`)
       .then((res) => res.json())
       .then((data) => setData(data))
       .catch((error) => console.error("Error:", error));
-  }, [baseUrl]); // Empty dependency array ensures the fetch is done once on component mount
+    } catch (error) {
+      console.error("Error:", error);
+      
+    }  finally {
+      setIsLoading(false);
+    }
+
+  }, [baseUrl]); 
   
+  if (isLoading) {
+    return <Loading />;
+  }
   
   return (
     <div className='bg-white'>

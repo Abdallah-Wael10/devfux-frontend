@@ -28,8 +28,9 @@ import Design from "./component/desgin/page";
 import Dev from "./component/dev/page";
 import Test from "./component/testC/page";
 import Lanch from "./component/lanch/page";
-import { getAuthToken } from "./utils/page";
+import Loading from "./component/loading/page";
 export default function Home() {
+  const [loading, setLoading] = useState(true);
   const [activeComponent, setActiveComponent] = useState("plan");
   const baseUrl = process.env.NEXT_PUBLIC_API_URL
 
@@ -51,23 +52,38 @@ export default function Home() {
   };
   const [data , setDataa] = useState([]);
   useEffect(() => {
-    fetch(`${baseUrl}/api/project`)
-      .then((res) => res.json())
-      .then((data) => setDataa(data))
-      .catch((error) => console.error("Error:", error));
+try {
+  setLoading(true);
+  fetch(`${baseUrl}/api/project`)
+  .then((res) => res.json())
+  .then((data) => setDataa(data))
+  .catch((error) => console.error("Error:", error));
+} catch (error) {
+   console.error("Error:", error);
+} finally {
+  setLoading(false);
+}
   }, [baseUrl]); 
   
   
   
         const [packages , setData] = useState([]);
         useEffect(() => {
-
+        try {
           fetch(`${baseUrl}/api/package`)
-            .then((res) => res.json())
-            .then((data) => setData(data))
-            .catch((error) => console.error("Error:", error));
+          .then((res) => res.json())
+          .then((data) => setData(data))
+          .catch((error) => console.error("Error:", error));
+        } catch (error) {
+           console.error("Error:", error);
+          
+        }
+       
         }, [baseUrl]);
   
+  if (loading) {
+    return <Loading />;
+  }
   
   return (
     <div className="">
@@ -199,12 +215,12 @@ export default function Home() {
             {renderComponent()}
             </div>
       </section>
-          <section className="w-full h-max pb-5 bg-white max-460:h-[2970px] max-770:h-max max-770:pb-5 ">
+          <section className="w-full h-max pb-5 bg-white  max-770:h-max max-770:pb-5 ">
             <div className="w-full h-[60px] flex flex-col text-center">
               <h1 className="w-full h-[30px] text-[26px] text-[#737373] font-medium">Our Work</h1>
               <span className="text-[36px] text-[#978DEF] font-bold w-full h-[30px]">Portfolio</span>
             </div>
-                <div className="mt-[41px] pl-[30px] pt-[20px] w-full h-max pb-5 justify-center bg-white flex flex-wrap gap-[74px] max-460:h-[2740px] max-460:p-0 max-770:h-max max-770:pb-5">
+                <div className="mt-[41px] pl-[30px] pt-[20px] w-full h-max pb-5 justify-center bg-white flex flex-wrap gap-[74px]  max-460:p-0 max-770:h-max max-770:pb-5 max-770:gap-5">
                 {data.slice(0, 6).map((item) => (
   <Card
     key={item._id}

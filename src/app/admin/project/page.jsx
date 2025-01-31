@@ -5,8 +5,10 @@ import Nav2 from "@/app/component/nav2/page";
 import Card from "@/app/component/card2/page";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Loading from "@/app/component/loading/page";
 
 const Project = () => {
+  const [loading, setLoading] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const [data, setData] = useState([]);
@@ -41,20 +43,29 @@ const Project = () => {
   const fetchProjects = () => {
     const token = getAuthToken();
 
-    fetch(`${baseUrl}/api/project`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setData(data))
-      .catch((error) => console.error("Error:", error));
+    try {
+      setLoading(true);
+      fetch(`${baseUrl}/api/project`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setData(data))
+        .catch((error) => console.error("Error:", error));
+    } catch (error) {
+        console.error(error);
+  
+    } finally{
+      setLoading(false);
+    }
   };
 
   const handleDelete = async (projectId) => {
     const token = getAuthToken();
     if (confirm("Are you sure you want to delete this project?")) {
       try {
+        setLoading(true);
         const response = await fetch(`${baseUrl}/api/project/${projectId}`, {
           method: "DELETE",
           headers: {
@@ -63,13 +74,14 @@ const Project = () => {
         });
         if (response.ok) {
           setData(data.filter((project) => project._id !== projectId));
-          alert("Project deleted successfully!");
         } else {
           alert("Error deleting project");
         }
       } catch (error) {
         console.error(error);
         alert("An error occurred while deleting the project");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -90,6 +102,7 @@ const Project = () => {
         replaceFormData.append("oldImagePath", selectedImage);
         replaceFormData.append("newImage", newExtraImageFile);
         const token = getAuthToken();
+        setLoading(true);
 
         const replaceResponse = await fetch(
           `${baseUrl}/api/project/${projectId}/image`,
@@ -105,7 +118,7 @@ const Project = () => {
         if (!replaceResponse.ok) {
           throw new Error("Failed to replace image");
         }
-      }
+      } 
 
       const updateFormData = new FormData();
       updateFormData.append("title", editingProject.title);
@@ -136,12 +149,13 @@ const Project = () => {
         throw new Error("Failed to update project");
       }
 
-      alert("Project updated successfully!");
       fetchProjects();
       setShowEditModal(false);
     } catch (error) {
       console.error(error);
       alert("An error occurred while updating the project");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -198,6 +212,7 @@ const Project = () => {
     }
 
     try {
+      setLoading(true);
       const response = await fetch(`${baseUrl}/api/project`, {
         method: "POST",
         body: formData,
@@ -207,7 +222,6 @@ const Project = () => {
       });
 
       if (response.ok) {
-        alert("Project created successfully!");
         fetchProjects();
         setShowCreateModal(false);
       } else {
@@ -216,8 +230,14 @@ const Project = () => {
     } catch (error) {
       console.error(error);
       alert("An error occurred while creating the project");
+    } finally {
+      setLoading(false);
     }
   };
+  if (loading) {
+    return <Loading />;
+    
+  }
 
   return (
     <div className="w-full min-h-screen bg-gray-100">
@@ -235,7 +255,7 @@ const Project = () => {
       </div>
 
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed  inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg text-black p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-semibold mb-4">Create New Project</h2>
             <form onSubmit={handleCreateSubmit}>

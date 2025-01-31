@@ -3,8 +3,9 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import devv from "./images/devv.svg";
 import dess from "./images/dess.svg";
-
+import Loading from '../loading/page';
 const Form = () => {
+  const [loadingg, setLoadingg] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const [selectedOption, setSelectedOption] = useState('');
@@ -45,6 +46,7 @@ const Form = () => {
     };
 
     try {
+      setLoadingg(true);
       const response = await fetch(`${baseUrl}/api/contactus`, {
         method: 'POST',
         headers: {
@@ -63,8 +65,12 @@ const Form = () => {
       setSuccess('Network error. Please try again later.');
     } finally {
       setLoading(false);
+      setLoadingg(false);
     }
   };
+   if (loadingg) {
+    return <Loading/>
+   }
 
   return (
     <div className="w-[760px] h-[1035px] bg-white rounded-[23px] border-[1px] border-solid border-gray-400 max-460:w-[94%] max-460:h-max">

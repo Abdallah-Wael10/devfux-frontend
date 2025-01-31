@@ -8,8 +8,9 @@ import time from "../step1/images/time.svg";
 import cal from "./images/cal.svg"
 import devv from "../form/images/devv.svg";
 import dess from "../form/images/dess.svg";
-
+import Loading from "../loading/page";
 const Step2 = () => {
+  const [loading, setLoading] = useState(true);
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const [success, setSuccess] = useState(null);
 
@@ -99,6 +100,7 @@ const Step2 = () => {
     };
   
     try {
+      setLoading(true);
       const response = await fetch(`${baseUrl}/api/book`, {
         method: "POST",
         headers: {
@@ -115,8 +117,13 @@ const Step2 = () => {
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("Failed to submit booking!");  
+    } finally {
+      setLoading(false);
     }
   };
+  if (loading) {
+    return <Loading />;
+  }
   
 const handleInputChange = (e) => {
   const { name, value } = e.target;

@@ -4,8 +4,11 @@ import React, { useState, useEffect } from 'react';
 import Nav2 from '@/app/component/nav2/page';
 import { useRouter } from "next/navigation"; 
 import { getAuthToken } from "@/app/utils/page";
+import Loading from "@/app/component/loading/page";
 
 const Book_admin = () => {
+    const [loading , setLoading] = useState(false);
+  
    const baseUrl = process.env.NEXT_PUBLIC_API_URL
         const router = useRouter();
    useEffect(() => {
@@ -19,7 +22,9 @@ const Book_admin = () => {
         }, [router]);
     const [data , setData] = useState([]);
     useEffect(() => {
-            const token = getAuthToken();
+     try {
+      setLoading(true);
+      const token = getAuthToken();
       
       fetch(`${baseUrl}/api/book`,{
         headers: {
@@ -29,9 +34,18 @@ const Book_admin = () => {
         .then((res) => res.json())
         .then((data) => setData(data))
         .catch((error) => console.error("Error:", error));
-    }, [baseUrl]); // Empty dependency array ensures the fetch is done once on component mount
+     } catch (error) {
+       console.log(error);
+      
+     } finally{
+       setLoading(false);
+     }
+    }, [baseUrl]); 
     
-    
+    if (loading) {
+      return <Loading />;
+      
+    }
 
   return (
     <div className="w-full min-h-screen text-black bg-gray-100">

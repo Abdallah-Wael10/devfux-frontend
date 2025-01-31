@@ -4,8 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Nav2 from '@/app/component/nav2/page';
 import { useRouter } from "next/navigation"; 
 import Package from '@/app/component/package2/page';
+import Loading from "@/app/component/loading/page";
 
 const Package_Admin = () => {
+  const [loading, setLoading] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const [packages, setPackages] = useState([]);
@@ -58,6 +60,7 @@ const Package_Admin = () => {
       : `${baseUrl}/api/package`;
 
     try {
+      setLoading(true);
       const token = getAuthToken();
       const response = await fetch(url, {
         method,
@@ -74,10 +77,8 @@ const Package_Admin = () => {
           setPackages(packages.map(pkg => 
             pkg._id === result._id ? result : pkg
           ));
-          alert('Package updated successfully!');
         } else {
           setPackages([...packages, result]);
-          alert('Package created successfully!');
         }
         setFormData(initialFormState);
         setEditingPackage(null);
@@ -87,6 +88,8 @@ const Package_Admin = () => {
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,6 +97,7 @@ const Package_Admin = () => {
     if (!window.confirm('Are you sure you want to delete this package?')) return;
 
     try {
+      setLoading(true);
       const token = getAuthToken();
       const response = await fetch(`${baseUrl}/api/package/${packageId}`, {
         method: 'DELETE',
@@ -104,13 +108,14 @@ const Package_Admin = () => {
 
       if (response.ok) {
         setPackages(packages.filter(pkg => pkg._id !== packageId));
-        alert('Package deleted successfully!');
       } else {
         alert('Failed to delete package.');
       }
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred while deleting.');
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -135,6 +140,10 @@ const Package_Admin = () => {
     setFormData(initialFormState);
     setEditingPackage(null);
   };
+  if (loading) {
+    return <Loading />;
+    
+  }
 
   return (
     <div className="w-full min-h-screen bg-gray-100">

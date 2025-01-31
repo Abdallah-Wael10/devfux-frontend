@@ -1,6 +1,6 @@
 "use client";
 import Cookies from "js-cookie"; // Import js-cookie library
-
+import Loading from "@/app/component/loading/page";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation"; // For navigation after login
 const Login = () => {
@@ -38,10 +38,13 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-  
+   
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex items-center text-black justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-center mb-6 text-indigo-600">
           Login

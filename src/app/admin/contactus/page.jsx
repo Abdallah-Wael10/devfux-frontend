@@ -3,12 +3,17 @@ import React, { useState, useEffect } from "react";
 import Nav2 from "@/app/component/nav2/page";
 import { useRouter } from "next/navigation"; 
 import { getAuthToken } from "@/app/utils/page";
+import Loading from "@/app/component/loading/page";
+
 const LeadReviewPage = () => {
+  const [loading , setLoading] = useState(false);
    const baseUrl = process.env.NEXT_PUBLIC_API_URL
       const router = useRouter();
   
     const [data , setData] = useState([]);
     useEffect(() => {
+    try {
+      setLoading(true)
       const token = getAuthToken();
 
       fetch(`${baseUrl}/api/contactus`,{
@@ -19,6 +24,12 @@ const LeadReviewPage = () => {
         .then((res) => res.json())
         .then((data) => setData(data))
         .catch((error) => console.error("Error:", error));
+    } catch (error) {
+      console.log(error);
+      
+    } finally {
+      setLoading(false)
+    }
     }, [baseUrl]); // Empty dependency array ensures the fetch is done once on component mount
     
       useEffect(() => {
@@ -30,7 +41,9 @@ const LeadReviewPage = () => {
           router.push("/admin/login");
         }
       }, [router]); // Run this effect only once after component mounts
-
+ if (loading) {
+  return <Loading />;
+ }
   return (
     <div className="w-full min-h-screen text-black bg-gray-100">
       {/* Navigation */}

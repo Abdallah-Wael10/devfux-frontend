@@ -2,6 +2,7 @@
 import React from "react";
 import { useState , useEffect } from "react";
 import { useRouter } from "next/navigation"; // For navigation after login
+import Loading from "@/app/component/loading/page";
 
 const Register = () => {
   const [fullName, setFullName] = useState('');
@@ -38,6 +39,9 @@ const Register = () => {
       console.log(err);
       
      }
+  }
+  if (isLoading) {
+    return <Loading />;
   }
   return (
     <div className="flex items-center text-black justify-center min-h-screen bg-gray-100 p-4">
