@@ -273,6 +273,7 @@ const Project = () => {
                 </div>
 
                 <div>
+                  <h1 className="w-full h-max font-medium text-red-500 text-center">Note: Must image be : jpg,jpeg,png</h1>
                   <label className="block mb-2">Main Image</label>
                   <input
                     type="file"

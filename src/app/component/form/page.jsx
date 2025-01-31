@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import devv from "./images/devv.svg";
 import dess from "./images/dess.svg";
 import Loading from '../loading/page';
+
 const Form = () => {
   const [loadingg, setLoadingg] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
   const [selectedOption, setSelectedOption] = useState('');
   const [formData, setFormData] = useState({
     name: '',
@@ -17,47 +17,101 @@ const Form = () => {
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
+  const [errors, setErrors] = useState({
+    service: '',
+    name: '',
+    phone: '',
+    email: '',
+    projectDetails: '',
+  });
 
-  // Function to handle selection
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      service: '',
+      name: '',
+      phone: '',
+      email: '',
+      projectDetails: '',
+    };
+
+    if (!selectedOption) {
+      newErrors.service = 'You must choose your services';
+      isValid = false;
+    }
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+      isValid = false;
+    }
+
+    const phoneRegex = /^[0-9]{10,15}$/;
+    if (!formData.phone.match(phoneRegex)) {
+      newErrors.phone = 'Invalid phone number (10-15 digits)';
+      isValid = false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.match(emailRegex)) {
+      newErrors.email = 'Invalid email address';
+      isValid = false;
+    }
+
+    if (!formData.projectDetails.trim()) {
+      newErrors.projectDetails = 'Project details are required';
+      isValid = false;
+    } else if (formData.projectDetails.length < 20) {
+      newErrors.projectDetails = 'Project details must be at least 20 characters';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
+    setErrors(prev => ({ ...prev, service: '' }));
   };
 
-  // Handle form field changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (!validateForm()) return;
 
+    setLoading(true);
     const payload = {
       service: selectedOption,
       name: formData.name,
       phone: formData.phone,
       email: formData.email,
-      details: formData.projectDetails, // Aligning "projectDetails" to "details" for backend
+      details: formData.projectDetails,
     };
 
     try {
       setLoadingg(true);
       const response = await fetch(`${baseUrl}/api/contactus`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
       const result = await response.json();
       if (response.ok) {
         setSuccess('Your message has been sent successfully!');
+        // Reset form
+        setSelectedOption('');
+        setFormData({
+          name: '',
+          phone: '',
+          email: '',
+          projectDetails: '',
+        });
       } else {
         setSuccess(`Error: ${result.message || 'Please try again.'}`);
       }
@@ -68,115 +122,148 @@ const Form = () => {
       setLoadingg(false);
     }
   };
-   if (loadingg) {
-    return <Loading/>
-   }
+
+  if (loadingg) return <Loading />;
 
   return (
-    <div className="w-[760px] h-[1035px] bg-white rounded-[23px] border-[1px] border-solid border-gray-400 max-460:w-[94%] max-460:h-max">
+    <div className="w-[760px] min-h-[1035px] bg-white rounded-[23px] border border-gray-400 max-460:w-[94%] max-460:h-max">
       <div className="w-full h-[150px] flex justify-center items-center flex-col gap-5">
-        <h1 className="w-full h-[30px] text-[36px] text-[#978DEF] font-black text-center">Contact us</h1>
-        <p className="w-full h-[30px] text-[24px] font-medium text-black text-center">
+        <h1 className="text-[36px] text-[#978DEF] font-black">Contact us</h1>
+        <p className="text-[24px] font-medium text-black">
           Get in touch with <span className="font-black">De<span className="text-[#978DEF]">vFu</span>x</span>
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="h-max pb-7">
-        <div className="w-full h-[170px] flex-wrap flex justify-center items-center text-center gap-[60px] max-460:h-max max-460:pb-5">
+      <form onSubmit={handleSubmit} className="pb-7 text-black">
+        <div className="w-full flex flex-wrap justify-center items-center gap-[60px] py-5 max-460:gap-4">
+          {/* Web Design */}
           <label className={`transform transition-transform duration-500 ease-in-out hover:scale-110 hover:shadow-xl hover:shadow-[rgba(151,141,239,0.5)] active:scale-95 w-[24%] h-[161px] flex flex-col justify-center items-center gap-[8px] rounded-[20px] text-white text-[16px] font-bold max-460:w-[47%] ${selectedOption === 'Web Design' ? 'bg-[#9a94d8]' : 'bg-[#CBC6F7]'}`}>
-            <input type="radio" name="service" value="Web Design" className="hidden" checked={selectedOption === 'Web Design'} onChange={handleOptionChange} />
-            <div className="option">
-              <Image src={dess} alt="design" />
-              <p>Web Design</p>
-            </div>
+            <input 
+              type="radio" 
+              name="service" 
+              value="Web Design" 
+              className="hidden" 
+              checked={selectedOption === 'Web Design'} 
+              onChange={handleOptionChange} 
+            />
+            <Image src={dess} alt="Web Design" />
+            <p>Web Design</p>
           </label>
 
-          {/* Web Development Label */}
+          {/* Web Development */}
           <label className={`transform transition-transform duration-500 ease-in-out hover:scale-110 hover:shadow-xl hover:shadow-[rgba(151,141,239,0.5)] active:scale-95 w-[24%] h-[161px] flex flex-col justify-center items-center gap-[8px] rounded-[20px] text-white text-[16px] font-bold max-460:w-[47%] ${selectedOption === 'Web Development' ? 'bg-[#9a94d8]' : 'bg-[#CBC6F7]'}`}>
-            <input type="radio" name="service" value="Web Development" className="hidden" checked={selectedOption === 'Web Development'} onChange={handleOptionChange} />
-            <div className="option">
-              <Image src={devv} alt="dev" />
-              <p>Web Development</p>
-            </div>
+            <input 
+              type="radio" 
+              name="service" 
+              value="Web Development" 
+              className="hidden" 
+              checked={selectedOption === 'Web Development'} 
+              onChange={handleOptionChange} 
+            />
+            <Image src={devv} alt="Web Development" />
+            <p>Web Development</p>
           </label>
 
-          {/* Website Label */}
+          {/* Website */}
           <label className={`transform transition-transform duration-500 ease-in-out hover:scale-110 hover:shadow-xl hover:shadow-[rgba(151,141,239,0.5)] active:scale-95 w-[24%] h-[161px] flex flex-col justify-center items-center gap-[8px] rounded-[20px] text-white text-[16px] font-bold max-460:w-[47%] ${selectedOption === 'Website' ? 'bg-[#9a94d8]' : 'bg-[#CBC6F7]'}`}>
-            <input type="radio" name="service" value="Website" className="hidden" checked={selectedOption === 'Website'} onChange={handleOptionChange} />
-            <div className="option">
-              <Image src={devv} alt="website" />
-              <p>Website</p>
-            </div>
+            <input 
+              type="radio" 
+              name="service" 
+              value="Website" 
+              className="hidden" 
+              checked={selectedOption === 'Website'} 
+              onChange={handleOptionChange} 
+            />
+            <Image src={devv} alt="Website" />
+            <p>Website</p>
           </label>
         </div>
+        {errors.service && <p className="text-center text-red-500 text-sm -mt-3 mb-4">{errors.service}</p>}
 
-        {/* Form Fields */}
-        <div className="w-full h-[600px] flex flex-col justify-center items-center gap-[60px]">
-          <label className="w-[80%] h-[50px] relative block">
-            <span className="absolute -top-2.5 left-3 text-sm text-purple-500 bg-white px-1">Name</span>
+        <div className="w-full flex flex-col items-center gap-[60px] px-4">
+          {/* Name Input */}
+          <div className="w-[80%] relative">
+            <label className="absolute -top-2.5 left-3 text-sm text-purple-500 bg-white px-1">Name</label>
             <input
               type="text"
               name="name"
-              placeholder="Your Name"
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
               value={formData.name}
               onChange={handleInputChange}
+              className={`w-full border rounded-lg px-4 py-3 focus:outline-none ${
+                errors.name ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-purple-500'
+              }`}
+              placeholder="Your Name"
             />
-          </label>
+            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+          </div>
 
-          <label className="w-[80%] h-[50px] relative block">
-            <span className="absolute -top-2.5 left-3 text-sm text-purple-500 bg-white px-1">Phone</span>
+          {/* Phone Input */}
+          <div className="w-[80%] relative">
+            <label className="absolute -top-2.5 left-3 text-sm text-purple-500 bg-white px-1">Phone</label>
             <input
-              type="number"
+              type="tel"
               name="phone"
-              placeholder="Your Mobile Number"
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
               value={formData.phone}
               onChange={handleInputChange}
+              className={`w-full border rounded-lg px-4 py-3 focus:outline-none ${
+                errors.phone ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-purple-500'
+              }`}
+              placeholder="Your Mobile Number"
             />
-          </label>
+            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+          </div>
 
-          <label className="w-[80%] h-[50px] relative block">
-            <span className="absolute -top-2.5 left-3 text-sm text-purple-500 bg-white px-1">Email</span>
+          {/* Email Input */}
+          <div className="w-[80%] relative">
+            <label className="absolute -top-2.5 left-3 text-sm text-purple-500 bg-white px-1">Email</label>
             <input
               type="email"
               name="email"
-              placeholder="Your Email Address"
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
               value={formData.email}
               onChange={handleInputChange}
+              className={`w-full border rounded-lg px-4 py-3 focus:outline-none ${
+                errors.email ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-purple-500'
+              }`}
+              placeholder="Your Email Address"
             />
-          </label>
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          </div>
 
-          <label className="w-[80%] h-[50px] relative block">
-            <span className="absolute -top-2.5 left-3 text-sm text-purple-500 bg-white px-1">Project Details</span>
+          {/* Project Details */}
+          <div className="w-[80%] relative">
+            <label className="absolute -top-2.5 left-3 text-sm text-purple-500 bg-white px-1">Project Details</label>
             <textarea
               name="projectDetails"
-              placeholder="Project Details"
-              rows="5"
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
               value={formData.projectDetails}
               onChange={handleInputChange}
-            ></textarea>
-          </label>
+              className={`w-full border rounded-lg px-4 py-3 focus:outline-none ${
+                errors.projectDetails ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-purple-500'
+              }`}
+              rows="5"
+              placeholder="Project Details"
+            />
+            {errors.projectDetails && <p className="text-red-500 text-sm mt-1">{errors.projectDetails}</p>}
+          </div>
         </div>
 
-        <div className="w-full h-[60px] flex justify-center items-center">
+        <div className="w-full flex justify-center mt-8">
           <button
             type="submit"
-            className="w-[80%] h-[56px] rounded-xl mt-4 bg-[#978DEF] flex justify-center items-center text-white text-[20px] font-medium transform transition-transform duration-500 ease-in-out hover:scale-110 hover:shadow-xl hover:shadow-[rgba(151,141,239,0.5)] active:scale-95"
             disabled={loading}
+            className="w-[80%] h-14 bg-[#978DEF] text-white text-xl font-medium rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Sending...' : 'Send'}
+            {loading ? 'Sending...' : 'Send Message'}
           </button>
         </div>
       </form>
 
-      {success && <p className="text-center mt-4">{success}</p>}
+      {success && (
+        <div className={`mt-4 mx-4 p-3 rounded-lg text-center ${
+          success.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+        }`}>
+          {success}
+        </div>
+      )}
     </div>
   );
 };

@@ -121,9 +121,7 @@ const Step2 = () => {
       setLoading(false);
     }
   };
-  if (loading) {
-    return <Loading />;
-  }
+  
   
 const handleInputChange = (e) => {
   const { name, value } = e.target;
@@ -177,7 +175,7 @@ const handleInputChange = (e) => {
         
         <div className="w-1/2 h-max pb-5 max-770:w-full  ">
           {/* Don't make any changes in this section */}
-          <form onSubmit={handleSubmit} className='rounded-[12px] border-solid border-[1px] w-full h-max pb-5'>
+          <form onSubmit={handleSubmit} className='rounded-[12px] border-solid border-[1px] w-full h-max pb-5 text-black'>
       <div className="w-full h-max pb-1 mb-[30px] flex-wrap flex justify-center items-center text-center gap-[60px] pt-4 pl-3">
       <label
         className={`transform transition-transform duration-500 ease-in-out hover:scale-110 hover:shadow-xl hover:shadow-[rgba(151,141,239,0.5)] active:scale-95 w-[26%] h-max pb-1 flex flex-col justify-center items-center gap-[8px] rounded-[20px] text-white text-[16px] font-bold max-770:w-[50%] max-770:h-[150px] max-1439:w-[40%] ${
