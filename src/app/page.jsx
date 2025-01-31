@@ -28,7 +28,7 @@ import Design from "./component/desgin/page";
 import Dev from "./component/dev/page";
 import Test from "./component/testC/page";
 import Lanch from "./component/lanch/page";
-
+import { getAuthToken } from "./utils/page";
 export default function Home() {
   const [activeComponent, setActiveComponent] = useState("plan");
   const baseUrl = process.env.NEXT_PUBLIC_API_URL
@@ -55,12 +55,13 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => setDataa(data))
       .catch((error) => console.error("Error:", error));
-  }, [baseUrl]); // Empty dependency array ensures the fetch is done once on component mount
+  }, [baseUrl]); 
   
   
   
         const [packages , setData] = useState([]);
         useEffect(() => {
+
           fetch(`${baseUrl}/api/package`)
             .then((res) => res.json())
             .then((data) => setData(data))
