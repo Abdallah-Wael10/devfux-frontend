@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-      domains: [process.env.DOMIAN],  // Allow localhost for image domains
-    },
-  };
-  
-  export default nextConfig;
-  
+  images: {
+    domains: [
+      "localhost",
+      "devfux-backend-production.up.railway.app" // Add your Railway backend domain
+    ],
+  },
+};
+
+export default nextConfig;
