@@ -35,7 +35,7 @@ const Nav = () => {
       {/* Logo */}
       <div className='flex w-24 justify-center max-770:block max-1439:hidden'>
         <Link href='/'>
-        <Image className='w-[49px] h-[39px]' src={Logo} alt='icon'/>
+          <Image className='w-[49px] h-[39px]' src={Logo} alt='icon'/>
         </Link>
       </div>
 
@@ -64,31 +64,35 @@ const Nav = () => {
       </button>
 
       {/* Mobile Menu */}
-      <div className={`max-770:absolute max-770:top-full max-770:left-0 max-770:right-0 max-770:bg-black max-770:z-50 max-770:transition-all max-770:duration-300 max-770:transform  ${
+      <div className={` hidden max-770:block max-770:absolute max-770:top-full max-770:left-0 max-770:right-0 max-770:bg-black max-770:z-50 max-770:transition-all max-770:duration-300 max-770:transform ${
         isOpen 
-          ? 'max-770:translate-y-0 max-770:opacity-100' 
-          : 'max-770:-translate-y-2 max-770:opacity-0'
+          ? 'max-770:translate-y-0 max-770:opacity-100 max-770:visible' 
+          : 'max-770:-translate-y-2 max-770:opacity-0 max-770:invisible'
       }`}>
-        <div className=" hidden max-770:flex max-770:flex-col max-770:gap-4 max-770:p-4 max-770:text-center">
-          <Link href='/'>
+        <div className="max-770:flex max-770:flex-col max-770:gap-4 max-770:p-4 max-770:text-center">
+          <Link href='/' onClick={() => setIsOpen(false)}>
             <h1 className='text-white px-3 py-2 hover:text-[rgb(151,141,239)] transition-all text-xs font-medium'>Home</h1>
           </Link>
-          <Link href='/pages/Service_page'>
+          <Link href='/pages/Service_page' onClick={() => setIsOpen(false)}>
             <h1 className='text-white px-3 py-2 hover:text-[rgb(151,141,239)] transition-all text-xs font-medium'>Service</h1>
           </Link>	
-          <Link href='/pages/Portfolio'>
+          <Link href='/pages/Portfolio' onClick={() => setIsOpen(false)}>
             <h1 className='text-white px-3 py-2 hover:text-[rgb(151,141,239)] transition-all text-xs font-medium'>Portfolio</h1>
           </Link>
-          <Link href='/pages/package_page'>
+          <Link href='/pages/package_page' onClick={() => setIsOpen(false)}>
             <h1 className='text-white px-3 py-2 hover:text-[rgb(151,141,239)] transition-all text-xs font-medium'>PRICING & PACKAGES</h1>
           </Link>
-          <Link href='/'>
+          <Link href='/' onClick={() => setIsOpen(false)}>
             <h1 className='text-white px-3 py-2 hover:text-[rgb(151,141,239)] transition-all text-xs font-medium'>About us</h1>
           </Link>
-          <Link href='/pages/contactus'>
+          <Link href='/pages/contactus' onClick={() => setIsOpen(false)}>
             <h1 className='text-white px-3 py-2 hover:text-[rgb(151,141,239)] transition-all text-xs font-medium'>CONTACT US</h1>
           </Link>
-          <Link href="/pages/book" className="flex justify-center items-center gap-2.5 w-full h-12 animate-bounce bg-[rgb(151,141,239)] text-white text-sm min-h-9 rounded-full transition-all ease-out hover:bg-purple-400 hover:scale-110 hover:-translate-y-1 duration-500 delay-200">
+          <Link 
+            href="/pages/book" 
+            onClick={() => setIsOpen(false)}
+            className="flex justify-center items-center gap-2.5 w-full h-12 animate-bounce bg-[rgb(151,141,239)] text-white text-sm min-h-9 rounded-full transition-all ease-out hover:bg-purple-400 hover:scale-110 hover:-translate-y-1 duration-500 delay-200"
+          >
             <Image src={camera} alt="icon"/>
             BOOK MEETING
           </Link>
