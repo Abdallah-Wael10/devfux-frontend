@@ -12,25 +12,28 @@ const LeadReviewPage = () => {
   
     const [data , setData] = useState([]);
     useEffect(() => {
-    try {
+    const fetchData = async () => {
       setLoading(true)
-      const token = getAuthToken();
-
-      fetch(`${baseUrl}/api/contactus`,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => setData(data))
-        .catch((error) => console.error("Error:", error));
-    } catch (error) {
-      console.log(error);
-      
-    } finally {
-      setLoading(false)
+      try {
+        const token = getAuthToken();
+  
+      await fetch(`${baseUrl}/api/contactus`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => setData(data))
+          .catch((error) => console.error("Error:", error));
+      } catch (error) {
+        console.log(error);
+        
+      } finally {
+        setLoading(false)
+      }
     }
-    }, [baseUrl]); // Empty dependency array ensures the fetch is done once on component mount
+    fetchData();
+    }, [baseUrl]); 
     
       useEffect(() => {
         const token = getAuthToken();
@@ -40,8 +43,9 @@ const LeadReviewPage = () => {
           // Redirect to login if no token is found
           router.push("/admin/login");
         }
-      }, [router]); // Run this effect only once after component mounts
+      }, [router]); 
  if (loading) {
+
   return <Loading />;
  }
   return (

@@ -16,17 +16,18 @@ const Book_admin = () => {
   
       
           if (!token) {
-            // Redirect to login if no token is found
             router.push("/admin/login");
+            return;
           }
         }, [router]);
     const [data , setData] = useState([]);
     useEffect(() => {
-     try {
-      setLoading(true);
+   const fetchData = async () => {
+     setLoading(true);
+    try {
       const token = getAuthToken();
       
-      fetch(`${baseUrl}/api/book`,{
+     await fetch(`${baseUrl}/api/book`,{
         headers: {
             'Authorization': `Bearer ${token}`,
         },
@@ -40,6 +41,8 @@ const Book_admin = () => {
      } finally{
        setLoading(false);
      }
+   }
+    fetchData();
     }, [baseUrl]); 
     
     if (loading) {

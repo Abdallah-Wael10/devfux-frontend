@@ -30,26 +30,13 @@ const Project = () => {
       router.push("/admin/login");
     }
 
-    fetch(`${baseUrl}/api/project`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setData(data))
-      .catch((error) => console.error("Error:", error));
+    fetchProjects();
   }, [router,baseUrl]);
-
-  const fetchProjects = () => {
-    const token = getAuthToken();
+  const fetchProjects = async ()  => {
+    setLoading(true);
 
     try {
-      setLoading(true);
-      fetch(`${baseUrl}/api/project`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+     await fetch(`${baseUrl}/api/project`)
         .then((res) => res.json())
         .then((data) => setData(data))
         .catch((error) => console.error("Error:", error));
@@ -60,6 +47,7 @@ const Project = () => {
       setLoading(false);
     }
   };
+
 
   const handleDelete = async (projectId) => {
     const token = getAuthToken();

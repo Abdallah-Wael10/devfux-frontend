@@ -31,19 +31,31 @@ const Package_Admin = () => {
   const [formData, setFormData] = useState(initialFormState);
 
   useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
-      router.push("/admin/login");
-    }
-    fetch(`${baseUrl}/api/package`,{
-      headers:{
-        Authorization: `Bearer ${token}`
+    const fetchData = async ()=>{
+      setLoading(true);
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          router.push("/admin/login");
+          return;
+        }
+      await fetch(`${baseUrl}/api/package`,{
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then((res) => res.json())
+        .then((data) => setPackages(data))
+        .catch((error) => console.error("Error:", error));
+      } catch (error) {
+        console.log(error);
+        
+      } finally {
+        setLoading(false);
       }
-    })
-    .then((res) => res.json())
-    .then((data) => setPackages(data))
-    .catch((error) => console.error("Error:", error));
-    }, [router,packages,baseUrl]);
+    }
+    fetchData();
+    }, [router,baseUrl]);
 
  
 

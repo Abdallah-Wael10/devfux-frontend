@@ -11,27 +11,27 @@ import Footer from '@/app/component/footer/page'
 
 import Loading from '@/app/component/loading/page';
 const Portfolio = () => {
-    const [isLoading, setIsLoading] = useState(true);
-  
- const baseUrl = process.env.NEXT_PUBLIC_API_URL
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]);
 
-  const [data , setData] = useState([]);
   useEffect(() => {
-    try {
+    const fetchData = async () => {
       setIsLoading(true);
-      fetch(`${baseUrl}/api/project`)
-      .then((res) => res.json())
-      .then((data) => setData(data))
-      .catch((error) => console.error("Error:", error));
-    } catch (error) {
-      console.error("Error:", error);
-      
-    }  finally {
-      setIsLoading(false);
-    }
+      try {
+        const response = await fetch(`${baseUrl}/api/project`);
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  }, [baseUrl]); 
-  
+    fetchData();
+  }, [baseUrl]);
+
   if (isLoading) {
     return <Loading />;
   }
